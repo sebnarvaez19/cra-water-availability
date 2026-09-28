@@ -1,6 +1,33 @@
-def main():
-    print("Hello from cra-water-availability!")
+"""Basic app to display water availability on Atlántico."""
+
+from datetime import datetime
+from pathlib import Path
+
+import streamlit as st
 
 
-if __name__ == "__main__":
-    main()
+css = Path("style.css").read_text(encoding="utf-8")
+st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+
+pages = st.navigation([st.Page("src/home.py", title="Análisis departamental")], position="top")
+pages.run()
+
+
+with st.bottom:
+    st.markdown("---")
+    st.markdown(
+        """
+        <div class="footer-brand">
+            <img src="/app/static/logo.svg" alt="CRA logo" />
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        "<div class='footer-text'>Corporación Autónoma Regional del Atlántico</div>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        f"<div class='footer-text'>© {datetime.now().year}</div>",
+        unsafe_allow_html=True,
+    )
