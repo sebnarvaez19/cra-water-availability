@@ -23,7 +23,7 @@ def load_table(table_name: str, geopackage_path: str = GEOPACKAGE_PATH) -> GeoDa
         Table of interest.
 
     """
-    return GeoDataFrame(read_file(geopackage_path, layer=table_name).to_crs("EPSG:3857"))
+    return GeoDataFrame(read_file(geopackage_path, layer=table_name).to_crs("EPSG:4326"))
 
 
 def load_tables(table_names: list[str], labels: list[str] | None = None) -> dict[str, GeoDataFrame]:
