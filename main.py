@@ -6,6 +6,7 @@ from zoneinfo import ZoneInfo
 
 import streamlit as st
 
+st.set_page_config(layout="wide")
 css = Path("style.css").read_text(encoding="utf-8")
 st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 
