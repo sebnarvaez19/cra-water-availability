@@ -2,9 +2,9 @@
 
 from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import streamlit as st
-
 
 css = Path("style.css").read_text(encoding="utf-8")
 st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
@@ -28,6 +28,6 @@ with st.bottom:
         unsafe_allow_html=True,
     )
     st.markdown(
-        f"<div class='footer-text'>© {datetime.now().year}</div>",
+        f"<div class='footer-text'>© {datetime.now(tz=ZoneInfo('America/Bogota')).year}</div>",
         unsafe_allow_html=True,
     )
