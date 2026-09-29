@@ -45,3 +45,32 @@ def load_tables(table_names: list[str], labels: list[str] | None = None) -> dict
     if isinstance(labels, list) and all(isinstance(label, str) for label in labels) and len(labels) == len(table_names):
         return {label: load_table(tn) for (tn, label) in zip(table_names, labels, strict=True)}
     return {tn: load_table(tn) for tn in table_names}
+
+
+def join_uhs_to_basin(data: GeoDataFrame, uhs: GeoDataFrame, basin_col: str = "basin") -> GeoDataFrame:
+    """Spatially join UHS records to basin polygons and name the matched basin.
+
+    Parameters
+    ----------
+    data : GeoDataFrame
+        Input features to enrich with UHS basin names.
+    uhs : GeoDataFrame
+        UHS polygons that contain the basin names.
+    basin_col : str, default "basin"
+        Column in the UHS table that stores the basin name.
+
+    Returns
+    -------
+    GeoDataFrame
+        Data with a new ``uhs_name`` column.
+
+    """
+    data_reproj = data.to_crs("EPSG:4326") if data.crs is not None and data.crs != "EPSG:4326" else data.copy()
+    uhs_reproj = uhs.to_crs("EPSG:4326") if uhs.crs is not None and uhs.crs != "EPSG:4326" else uhs.copy()
+
+    # Representative points give one UHS per polygon; an intersects join duplicates polygons on UHS borders.
+    points = GeoDataFrame(geometry=data_reproj.geometry.representative_point(), crs=data_reproj.crs)
+    matched = points.sjoin(uhs_reproj[["geometry", basin_col]], how="left", predicate="within")
+    matched = matched[~matched.index.duplicated(keep="first")]
+
+    return GeoDataFrame(data_reproj.assign(uhs_name=matched[basin_col]))
