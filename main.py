@@ -10,7 +10,13 @@ st.set_page_config(layout="wide")
 css = Path("style.css").read_text(encoding="utf-8")
 st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 
-pages = st.navigation([st.Page("src/home.py", title="Análisis departamental")], position="top")
+pages = st.navigation(
+    [
+        st.Page("src/home.py", title="Análisis departamental"),
+        st.Page("src/calculator.py", title="Calculador de volumen por reservorios"),
+    ],
+    position="top",
+)
 pages.run()
 
 
