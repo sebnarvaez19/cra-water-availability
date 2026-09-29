@@ -24,13 +24,39 @@ def load_watersheds() -> dict[str, GeoDataFrame]:
         Watershed GeoDataFrames.
 
     """
-    return load_tables(["Q_so8", "Q_so7", "Q_so6"], labels=["Orden 8", "Orden 7", "Orden 6"])
+    return load_tables(["Q_so6", "Q_so7", "Q_so8"], labels=["Orden 6", "Orden 7", "Orden 8"])
 
 
 @st.cache_data
 def load_uhs() -> GeoDataFrame:
-    """Load the UHS basin polygons for the spatial join."""
+    """Load the UHS basin polygons for the spatial join.
+
+    Returns
+    -------
+    GeoDataFrame
+        UHS GeoDataFrame.
+
+    """
     return load_table("uhs")
+
+
+@st.dialog("Cuencas de gran tamaño")
+def too_big_watersheds_warning(order: str) -> None:
+    """Warn users from selecting too big watersheds.
+
+    Parameters
+    ----------
+    order : str
+        Order to warn.
+
+    """
+    st.info(
+        f"""
+            Cuidado, las cuencas de {order.lower()} cuentan con una extensión muy grande,
+            revisar criterios técnicos con mucho detalle.
+        """,
+        icon=":material/warning:",
+    )
 
 
 st.title("Oferta estimada departamental")
@@ -38,7 +64,7 @@ st.text("Disponibilidad hídrica y viabilidad ambiental para la construcción de
 
 selector_watershed = st.selectbox(
     label="Orden de cuenca",
-    options=["Orden 8", "Orden 7", "Orden 6"],
+    options=["Orden 6", "Orden 7", "Orden 8"],
 )
 
 watersheds = load_watersheds()
@@ -49,6 +75,9 @@ selected_watershed = join_uhs_to_basin(selected_watershed, load_uhs())
 if st.session_state.get("selected_layer") != selector_watershed:
     st.session_state["selected_layer"] = selector_watershed
     st.session_state["selected_feature_id"] = None
+
+if st.session_state.get("selected_layer") in {"Orden 8", "Orden 7"}:
+    too_big_watersheds_warning(str(st.session_state.get("selected_layer")))
 
 selected_id = st.session_state["selected_feature_id"]
 
@@ -69,8 +98,20 @@ center_lon = -74.9652266742
 map_obj = folium.Map(location=[center_lat, center_lon], zoom_start=10, width="100%")
 
 
-def choropleth_style(feature: Any) -> dict[str, str | float]:
-    """Style each polygon according to the annual water offer in cubic meters."""
+def choropleth_style(feature: dict[str, dict]) -> dict[str, str | float]:
+    """Style each polygon according to the annual water offer in cubic meters.
+
+    Parameters
+    ----------
+    feature : Any
+        Polygon to style.
+
+    Returns
+    -------
+    dict[str, str | float]
+        Style specification.
+
+    """
     value = feature["properties"].get("oferta_estimada_anual", 0)
     if value is None:
         value = 0
@@ -155,8 +196,11 @@ with map_col:
             <div style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.3rem;">
                 Oferta total estimada anual (rendimiento 75%) m3
             </div>
-            <div style="width: 100%; height: 12px; border-radius: 6px; background: linear-gradient(to right, #f1eef6 0%, #bdc9e1 33%, #74a9cf 66%, #0570b0 100%);"></div>
-            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #444; margin-top: 0.2rem;">
+            <div style="width: 100%; height: 12px; border-radius: 6px;
+                background: linear-gradient(to right, #f1eef6 0%, #bdc9e1 33%,
+                #74a9cf 66%, #0570b0 100%);"></div>
+            <div style="display: flex; justify-content: space-between;
+                font-size: 0.75rem; color: #444; margin-top: 0.2rem;">
                 <span>{min_value:,.0f}</span>
                 <span>{((min_value + max_value) / 2):,.0f}</span>
                 <span>{max_value:,.0f}</span>
