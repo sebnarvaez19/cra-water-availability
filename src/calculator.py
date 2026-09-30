@@ -124,9 +124,13 @@ with chart_col:
         x = clean_df["area_km2"].array
         y = clean_df["oferta_estimada_anual"].array
 
+        x_limit = 2.0
+        y_min_limit = 0.0
+        y_max_limit = None
+
         if len(x) > 1:
             slope, intercept = np.polyfit(x, y, 1)
-            x_trend = np.linspace(x.min(), x.max(), 100)
+            x_trend = np.linspace(0, max(x_limit, float(x.max())), 100)
             y_trend = slope * x_trend + intercept
 
             fig.add_trace(
@@ -140,12 +144,15 @@ with chart_col:
                 ),
             )
 
-        fig.update_layout(
-            template="plotly_white",
-            legend_title_text="Categoría",
-            hovermode="closest",
-            height=COMPONENT_HEIGHT,
-            legend={
+            y_min_limit = max(0.0, float(slope * 0 + intercept))
+            y_max_limit = float(slope * x_limit + intercept)
+
+        layout_kwargs = {
+            "template": "plotly_white",
+            "hovermode": "closest",
+            "height": COMPONENT_HEIGHT,
+            "xaxis": {"range": [0, x_limit]},
+            "legend": {
                 "orientation": "h",
                 "yanchor": "top",
                 "y": -0.2,
@@ -153,8 +160,12 @@ with chart_col:
                 "x": 0.5,
                 "title_text": "Orden de drenajes",
             },
-            margin={"l": 20, "r": 20, "t": 40, "b": 20},
-        )
+            "margin": {"l": 20, "r": 20, "t": 40, "b": 40},
+        }
+        if y_max_limit is not None and y_max_limit > y_min_limit:
+            layout_kwargs["yaxis"] = {"range": [y_min_limit, y_max_limit]}
+
+        fig.update_layout(**layout_kwargs)
 
         st.plotly_chart(fig, use_container_width=True)
     else:
