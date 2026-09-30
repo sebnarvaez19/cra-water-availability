@@ -84,6 +84,8 @@ if not selected_polygon.empty:
     bounds = selected_polygon.total_bounds
     map_obj.fit_bounds([[bounds[1], bounds[0]], [bounds[3], bounds[2]]])
 
+COMPONENT_HEIGHT = 450
+
 map_col, chart_col = st.columns(2)
 
 with map_col:
@@ -91,7 +93,7 @@ with map_col:
         map_obj,
         key=f"basin-map-{selected_basin}",
         use_container_width=True,
-        height=450,
+        height=COMPONENT_HEIGHT,
         returned_objects=[],
     )
 
@@ -116,7 +118,7 @@ with chart_col:
                 "oferta_estimada_anual": "Oferta Estimada Anual (m³)",
                 "label": "Orden",
             },
-            title="Área vs. Oferta Estimada Anual con Línea de Regresión Global",
+            title="Área vs. Oferta Estimada Anual",
         )
 
         x = clean_df["area_km2"].array
@@ -142,6 +144,16 @@ with chart_col:
             template="plotly_white",
             legend_title_text="Categoría",
             hovermode="closest",
+            height=COMPONENT_HEIGHT,
+            legend={
+                "orientation": "h",
+                "yanchor": "top",
+                "y": -0.2,
+                "xanchor": "center",
+                "x": 0.5,
+                "title_text": "Categoría",
+            },
+            margin={"l": 20, "r": 20, "t": 40, "b": 20},
         )
 
         st.plotly_chart(fig, use_container_width=True)
