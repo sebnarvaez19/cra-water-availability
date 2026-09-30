@@ -14,6 +14,7 @@ pages = st.navigation(
     [
         st.Page("src/home.py", title="Análisis departamental"),
         st.Page("src/calculator.py", title="Calculador de volumen por reservorios"),
+        st.Page("src/docs.py", title="Documentación"),
     ],
     position="top",
 )
