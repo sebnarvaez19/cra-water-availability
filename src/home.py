@@ -89,7 +89,7 @@ colormap = branca.colormap.LinearColormap(
     colors=["#f1eef6", "#bdc9e1", "#74a9cf", "#0570b0"],
     vmin=min_value,
     vmax=max_value,
-    caption="Oferta total estimada anual (rendimiento 75%) m3",
+    caption="Oferta Estimada Anual (m³)",
 )
 
 center_lat = 10.6769886733
@@ -194,7 +194,7 @@ with map_col:
         f"""
         <div style="width: 100%; max-width: 100%; margin-top: 0.5rem;">
             <div style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.3rem;">
-                Oferta total estimada anual (rendimiento 75%) m3
+                Oferta Estimada Anual m³
             </div>
             <div style="width: 100%; height: 12px; border-radius: 6px;
                 background: linear-gradient(to right, #f1eef6 0%, #bdc9e1 33%,
@@ -228,9 +228,9 @@ with table_col:
                 ],
             },
             index=[
-                "Area de la cuenca (km2)",
+                "Area de la cuenca (km²)",
                 "Caudal aprovechable (l/s)",
-                "Oferta estimada anual (m3)",
+                "Oferta estimada anual (m³)",
                 "Subcuenca",
                 "Cuenca hidrográfica",
             ],
