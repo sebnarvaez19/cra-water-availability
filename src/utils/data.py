@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from geopandas import GeoDataFrame, read_file
+from pandas import concat
 
 GEOPACKAGE_PATH = str(Path(__file__).parents[2] / "data" / "watersheds.gpkg")
 
@@ -45,6 +46,29 @@ def load_tables(table_names: list[str], labels: list[str] | None = None) -> dict
     if isinstance(labels, list) and all(isinstance(label, str) for label in labels) and len(labels) == len(table_names):
         return {label: load_table(tn) for (tn, label) in zip(table_names, labels, strict=True)}
     return {tn: load_table(tn) for tn in table_names}
+
+
+def merge_loaded_tables(table_names: list[str], labels: list[str]) -> GeoDataFrame:
+    """Merge loaded tables in a single one with label column.
+
+    Parameters
+    ----------
+    table_names : list[str]
+        Tables to load.
+    labels : list[str]
+        Labels for label column.
+
+    Returns
+    -------
+    GeoDataFrame
+        Merged GeoDataFrame.
+
+    """
+    tables = load_tables(table_names, labels)
+    for label, gdf in tables.items():
+        gdf["label"] = label
+    gdf = concat(tables.values(), ignore_index=True)
+    return GeoDataFrame(gdf)
 
 
 def join_uhs_to_basin(data: GeoDataFrame, uhs: GeoDataFrame, basin_col: str = "basin") -> GeoDataFrame:
