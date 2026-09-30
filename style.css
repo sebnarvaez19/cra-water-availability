@@ -1,0 +1,34 @@
+h1 {
+    font-size: 32px !important;
+}
+
+.stBottom {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    background-color: #f1f3f5;
+    /* Change your background color here */
+    color: #333333;
+    /* Text color */
+
+}
+
+.footer-brand {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+.footer-brand img {
+    display: block;
+    margin: 0 auto;
+    width: 48px;
+    height: auto;
+}
+
+.footer-text {
+    text-align: center;
+    font-size: small;
+}
