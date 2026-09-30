@@ -151,7 +151,7 @@ with chart_col:
                 "y": -0.2,
                 "xanchor": "center",
                 "x": 0.5,
-                "title_text": "Categoría",
+                "title_text": "Orden de drenajes",
             },
             margin={"l": 20, "r": 20, "t": 40, "b": 20},
         )
